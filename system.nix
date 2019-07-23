@@ -3,7 +3,7 @@
 let
   me = "chris";
 
-  homeLocation = builtins.toPath "/home/{$me}";
+  homeLocation = builtins.toPath "/home/${me}";
 
   unstableTarball =
     fetchTarball
