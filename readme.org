@@ -1,0 +1,37 @@
+* My nixos config
+** Installation
+   Clone the repo
+   #+BEGIN_SRC shell
+     git clone git@github.com/ccarlile/nixos-config
+   #+END_SRC
+   
+   Edit /etc/configuration.nix:
+   #+BEGIN_SRC nix
+     # Edit this configuration file to define what should be installed on
+     # your system.  Help is available in the configuration.nix(5) man page
+     # and in the NixOS manual (accessible by running ‘nixos-help’).
+
+     let
+       me = "chris";
+       nix-config-location = builtins.toPath "/home/${me}/nixos-config/system.nix";
+     in
+     {
+       imports =
+         [ # Include the results of the hardware scan.
+           ./hardware-configuration.nix
+           nix-config-location   
+         ];
+     }
+   #+END_SRC
+   
+   Symlink home.nix:
+   #+BEGIN_SRC shell
+     cd ~/.config/nixpkgs
+     ln -s ~/nixos-config/home.nix home.nix
+   #+END_SRC
+   
+   Finally, build the system:
+   #+BEGIN_SRC shell
+sudo nixos-rebuild switch
+home-manager switch
+   #+END_SRC
