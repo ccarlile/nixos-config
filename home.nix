@@ -1,6 +1,14 @@
 { config, pkgs, ... }:
 
+let
+  nur = import (import ./nix/sources.nix).nur { };
+in
 {
+  imports = [
+    nur.repos.rycee.hmModules.emacs-init
+    ./emacs.nix
+  ];
+
   # Let Home Manager install and manage itself.
   programs.home-manager.enable = true;
 
@@ -72,10 +80,14 @@
     enableNixDirenvIntegration = true;
   };
 
+  home.packages = [
+    pkgs.silver-searcher
+  ];
+
   # Home Manager needs a bit of information about you and the
   # paths it should manage.
   home.username = "chris";
-  home.homeDirectory = "/Users/chris";
+  home.homeDirectory = "/home/chris";
 
   # This value determines the Home Manager release that your
   # configuration is compatible with. This helps avoid breakage
