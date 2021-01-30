@@ -5,7 +5,7 @@ let
 in
 {
   imports = [
-    nur.repos.rycee.hmModules.emacs-init
+    ./emacs-init.nix
     ./emacs.nix
   ];
 
