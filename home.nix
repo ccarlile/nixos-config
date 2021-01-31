@@ -16,6 +16,15 @@ in
     enable = true;
     userName = "Chris Carlile";
     userEmail = "christopher.carlile@gmail.com";
+    ignores = [
+      "*~"
+      "\#*\#"
+      "/.emacs.desktop"
+      "/.emacs.desktop.lock"
+      ".\#*"
+      ".projectile"
+      ".dir-locals.el"
+    ];
   };
 
   programs.vim = {
@@ -80,8 +89,15 @@ in
     enableNixDirenvIntegration = true;
   };
 
+  fonts.fontconfig.enable = true;
+
   home.packages = [
     pkgs.silver-searcher
+    pkgs.metals
+    pkgs.emacs-all-the-icons-fonts
+    pkgs.material-icons
+    pkgs.cowsay
+    pkgs.fortune
   ];
 
   # Home Manager needs a bit of information about you and the

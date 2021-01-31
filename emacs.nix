@@ -37,6 +37,8 @@
         (setq global-visual-line-mode 1)
         (setq-default indent-tabs-mode nil)
         (add-hook 'dired-mode-hook 'auto-revert-mode)
+        (setq explicit-shell-file-name 
+          (concat (getenv "HOME") "/.nix-profile/bin/zsh"))
       '';
 
       usePackage = {
@@ -51,11 +53,29 @@
             (setq evil-want-C-u-scroll t)
             (setq evil-want-Y-yank-to-eol t)
             (setq evil-want-integration nil)
+            (setq evil-want-keybinding' nil)
             '';
           config = ''
+            (define-key evil-normal-state-map [backspace] 
+              'evil-switch-to-windows-last-buffer)
             (evil-mode)
             '';
           };
+
+        dired = {
+          enable = true;
+          config = ''
+            (define-key dired-mode-map (kbd "SPC") nil)
+          '';
+        };
+
+        all-the-icons-dired = {
+          enable = true;
+          after = [ "all-the-icons" ];
+          hook = [
+            "(dired-mode . all-the-icons-dired-mode)"
+          ];
+        };
 
         magit = {
           enable = true;
@@ -65,6 +85,34 @@
         ag = {
           enable = true;
           command = [ "ag" "ag-regexp" "ag-project" ];
+        };
+
+        scala-mode = {
+          enable = true;
+        };
+
+        sbt-mode = {
+          enable = true;
+          command = [ "sb-start" "sbt-command" ];
+          config = ''
+            (substitute-key-definition
+              'minibuffer-complete-word
+              'self-insert-command
+              minibuffer-local-completion-map)
+            (setq sbt:program-options '("-Dsbt.supershell=false"))
+          '';
+        };
+
+        sly = {
+          enable = true;
+        };
+
+        evil-collection = {
+          enable = true;
+          config = ''
+            (evil-collection-init 'term)
+            (evil-collection-init 'dired)
+          '';
         };
 
         projectile = {
@@ -179,6 +227,17 @@
           '';
         };
 
+        edit-indirect = {
+          enable = true;
+        };
+
+        vue-mode = {
+          enable = true;
+          config = ''
+            (set-face-background 'mmm-default-submode-face nil)
+          '';
+        };
+
         which-key = {
           enable = true;
           config = ''
@@ -199,6 +258,10 @@
             (load-theme 'doom-solarized-light t) 
             (doom-themes-org-config)
           '';
+        };
+
+        all-the-icons = {
+          enable = true;
         };
 
         telephone-line = {
@@ -238,7 +301,7 @@
         company = {
           enable = true;
           config = ''
-            (company-mode)
+            (global-company-mode)
           '';
         };
 
@@ -246,6 +309,66 @@
           enable = true;
           config = ''
             (global-flycheck-mode)
+          '';
+        };
+
+        lsp-mode = {
+          enable = true;
+          hook = [
+            "(scala-mode . lsp)"
+            "(lsp-mode . lsp-lens-mode)"
+          ];
+          config = ''
+            (setq lsp-prefer-flymake nil)
+          '';
+        };
+
+        lsp-metals = {
+          enable = true;
+          config = ''
+            (setq lsp-metals-treeview-show-when-views-received t)
+          '';
+        };
+
+        lsp-ui = {
+          enable = true;
+        };
+
+        company-lsp = {
+          enable = true;
+        };
+
+        treemacs = {
+          enable = true;
+        };
+
+        lsp-treemacs = {
+          enable = true;
+        };
+
+        posframe = {
+          enable = true;
+        };
+
+        helm-posframe = {
+          enable = true;
+          config = ''
+            (helm-posframe-enable)
+          '';
+        };
+
+        dap-mode = {
+          enable = true;
+          hook = [
+            "(lsp-mode . dap-mode)"
+            "(lsp-mode . dap-ui-mode)"
+          ];
+        };
+
+        dumb-jump = {
+          enable = true;
+          config = ''
+            (add-hook 'xref-backend-functions #'dumb-jump-xref-activate)
           '';
         };
 
@@ -295,7 +418,9 @@
               "j" 'evil-next-visual-line
               "k" 'evil-previous-visual-line
               "C-/" 'evil-avy-goto-char-timer)
+
             (general-nvmap
+              :keymaps 'override
               :prefix "SPC"
 
               "SPC" '(helm-M-x :which-key "M-x")
@@ -341,12 +466,17 @@
               "t" '(:ignore t :which-key "toggles/themes")
               "t t" '(helm-themes :which-key "select theme")
               "t n" '(global-linum-mode :which-key "toggle line numbers")
+              "t r" '(treemacs :which-key "treemacs")
 
               "i" '(:ignore t :which-key "inflection")
               "i k" '(string-inflection-kebab-case :which-key "kebab-case")
               "i j" '(string-inflection-camelcase :which-key "CamelCase")
               "i c" '(string-inflection-lower-camelcase :which-key "lowerCamelCase")
-              "i p" '(string-inflection-lower-camelcase :which-key "under_score"))
+              "i p" '(string-inflection-lower-camelcase :which-key "under_score")
+              
+              "c" '(:ignore t :which-key "comment")
+              "c l" '(comment-region :which-key "comment region")
+              "c u" '(uncomment-region :which-key "uncomment region"))
 
             (general-imap "j"
               (general-key-dispatch 'self-insert-command
