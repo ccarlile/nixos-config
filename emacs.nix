@@ -39,6 +39,7 @@
         (add-hook 'dired-mode-hook 'auto-revert-mode)
         (setq explicit-shell-file-name 
           (concat (getenv "HOME") "/.nix-profile/bin/zsh"))
+        (setq sgml-quick-keys 'close)
       '';
 
       usePackage = {
@@ -58,6 +59,7 @@
           config = ''
             (define-key evil-normal-state-map [backspace] 
               'evil-switch-to-windows-last-buffer)
+            (evil-set-initial-state 'term-mode 'emacs)
             (evil-mode)
             '';
           };
@@ -66,7 +68,7 @@
           enable = true;
           config = ''
             (which-key-mode)
-            (which-key-setup-minibuffer)
+            (which-key-setup-side-window-bottom)
             (setq which-key-sort-order 'which-key-key-order-alpha
                   which-key-idle-delay 0.01)   
           '';
@@ -133,6 +135,7 @@
               "h i" '(info :which-key "info")
               "h b" '(describe-bindings :which-key "describe bindings")
               "h m" '(describe-mode :which-key "describe mode")
+              "h w" '(which-key-show-top-level :which-key "which key top level")
 
               "p" '(:ignore t :which-key "project")
               "p f" '(helm-projectile-find-file :which-key "find file")
@@ -261,6 +264,14 @@
         helm-ag = {
           enable = true;
           command = [ "helm-ag" "helm-projectile-ag" ];
+        };
+
+        helm-icons = {
+          enable = true;
+          config = ''
+            (setq helm-icons-provider 'all-the-icons)
+            (helm-icons-enable)
+          '';
         };
 
         org = {
@@ -435,6 +446,14 @@
         };
 
         lsp-treemacs = {
+          enable = true;
+        };
+
+        treemacs-evil = {
+          enable = true;
+        };
+
+        treemacs-projectile = {
           enable = true;
         };
 

@@ -24,6 +24,8 @@ in
       ".\#*"
       ".projectile"
       ".dir-locals.el"
+      ".direnv/"
+      ".envrc"
     ];
   };
 
@@ -91,13 +93,14 @@ in
 
   fonts.fontconfig.enable = true;
 
-  home.packages = [
-    pkgs.silver-searcher
-    pkgs.metals
-    pkgs.emacs-all-the-icons-fonts
-    pkgs.material-icons
-    pkgs.cowsay
-    pkgs.fortune
+  home.packages = with pkgs; [
+    silver-searcher
+    metals
+    emacs-all-the-icons-fonts
+    material-icons
+    cowsay
+    fortune
+    ammonite
   ];
 
   # Home Manager needs a bit of information about you and the
