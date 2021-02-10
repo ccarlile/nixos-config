@@ -55,6 +55,7 @@
             (setq evil-want-Y-yank-to-eol t)
             (setq evil-want-integration nil)
             (setq evil-want-keybinding' nil)
+            (setq evil-undo-system 'undo-fu)
             '';
           config = ''
             (define-key evil-normal-state-map [backspace] 
@@ -63,6 +64,10 @@
             (evil-mode)
             '';
           };
+
+        undo-fu = {
+          enable = true;
+        };
 
         which-key = {
           enable = true;
@@ -141,6 +146,9 @@
               "p f" '(helm-projectile-find-file :which-key "find file")
               "p p" '(helm-projectile-switch-project :which-key "switch to project")
               "p i" '(projectile-invalidate-cache :which-key "invalidate project cache")
+              "p t" '(projectile-toggle-between-implementation-and-test :which-key "switch between test and src")
+              "p s" '(helm-lsp-workspace-symbol :which-key "LSP - xref symbol")
+
               "l" '(:ignore t :which-key "lisp")
               "l s" '(eval-last-sexp :which-key "eval last sexp")
               "l e" '(eval-expression :which-key "eval expression")
@@ -148,10 +156,11 @@
 
               "s" '(:ignore t :which-key "search")
               "s f" '(helm-do-ag :which-key "search in files")
-              "s p" '(helm-do-ag-project-root :which-key "search in project")
+              "s p" '(helm-do-ag-project-root :which-key "search in this project")
               "s b" '(helm-do-ag-buffers :which-key "search in buffers")
               "s s" '(helm-swoop :which-key "swoop")
               "s m" '(helm-multi-swoop-projectile :which-key "multi swoop")
+              "s a" '(mine-do-ag-in-project :which-key "search in a project")
 
               "t" '(:ignore t :which-key "toggles/themes")
               "t t" '(helm-themes :which-key "select theme")
@@ -161,14 +170,12 @@
               "i" '(:ignore t :which-key "inflection")
               "i k" '(string-inflection-kebab-case :which-key "kebab-case")
               "i j" '(string-inflection-camelcase :which-key "CamelCase")
-              "i c" '(string-inflection-lower-camelcase :which-key "lowerCamelCase")
-              "i p" '(string-inflection-lower-camelcase :which-key "under_score")
-              
-              "c" '(:ignore t :which-key "comment")
-              "c l" '(comment-region :which-key "comment region")
-              "c u" '(uncomment-region :which-key "uncomment region"))
+              "i c" '(string-inflection-lower-camelcase :which-key "camelCase")
 
-              "m" '(:ignore t :which-key "major-mode")
+              "c l" '(comment-or-uncomment-line :which-key "toggle line comment")
+              "c u" '(uncomment-region :which-key "uncomment region")
+              "c r" '(comment-region :which-key "comment region")
+              "c a" '(helm-lsp-code-actions :which-key "LSP - code actions"))
 
             (general-imap "j"
               (general-key-dispatch 'self-insert-command
@@ -177,10 +184,12 @@
           '';
         };
 
+
         dired = {
           enable = true;
           config = ''
             (define-key dired-mode-map (kbd "SPC") nil)
+            (setq dired-omit-mode 1)
           '';
         };
 
@@ -234,7 +243,7 @@
           enable = true;
           config = ''
             (projectile-global-mode)
-            (setq projectile-enable-caching t)
+            (setq projectile-enable-caching 1)
           '';
         };
 
@@ -264,26 +273,34 @@
         helm-ag = {
           enable = true;
           command = [ "helm-ag" "helm-projectile-ag" ];
+          config = ''
+          '';
         };
 
         helm-icons = {
           enable = true;
           config = ''
-            (setq helm-icons-provider 'all-the-icons)
             (helm-icons-enable)
           '';
+        };
+
+        helm-lsp = {
+          enable = true;
         };
 
         org = {
           enable = true;
           config = ''
             (require 'org-tempo)
+            (require 'org-mouse)
             (org-babel-do-load-languages
              'org-babel-load-languages
               '((python . t)
                (shell . t)
                (ammonite . t)
                (lisp . t)))
+            (setq org-babel-python-command "python3")
+            (setq org-confirm-babel-evaluate nil)
           '';
         };
 
@@ -377,6 +394,15 @@
           enable = true;
         };
 
+        hasklig-mode = {
+          enable = true;
+          hook = [
+            "(haskell-mode . hasklig-mode)"
+            "(elm-mode . hasklig-mode)"
+            "(scala-mode . hasklig-mode)"
+          ];
+        };
+
         doom-modeline = {
           enable = true;
           init = ''
@@ -419,6 +445,7 @@
           enable = true;
           hook = [
             "(scala-mode . lsp)"
+            "(elm-mode . lsp)"
             "(lsp-mode . lsp-lens-mode)"
           ];
           config = ''
@@ -507,6 +534,10 @@
         nix-mode = {
           enable = true;
           mode = [ ''"\\.nix\\'"'' ];
+        };
+
+        elm-mode = {
+          enable = true;
         };
 
         iedit = {

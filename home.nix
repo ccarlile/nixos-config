@@ -18,7 +18,7 @@ in
     userEmail = "christopher.carlile@gmail.com";
     ignores = [
       "*~"
-      "\#*\#"
+      "\\#*\\#"
       "/.emacs.desktop"
       "/.emacs.desktop.lock"
       ".\#*"
@@ -31,11 +31,11 @@ in
 
   programs.vim = {
     enable = true;
-    plugins = [ 
-      pkgs.vimPlugins.airline
-      pkgs.vimPlugins.surround
-      pkgs.vimPlugins.repeat
-      pkgs.vimPlugins.nord-vim
+    plugins = with pkgs.vimPlugins; [ 
+      airline
+      surround
+      repeat
+      nord-vim
     ];
     settings = {
       ignorecase = true;
@@ -101,6 +101,8 @@ in
     cowsay
     fortune
     ammonite
+    elmPackages.elm-language-server
+    gotop
   ];
 
   # Home Manager needs a bit of information about you and the

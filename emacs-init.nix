@@ -60,6 +60,14 @@ let
         '';
       };
 
+      ensureNil = mkOption {
+        type = types.bool;
+        default = false;
+        description = ''
+          Whether to use <option>:ensure nil</option>
+        '';
+      };
+
       demand = mkOption {
         type = types.bool;
         default = false;
@@ -222,6 +230,7 @@ let
             if isBool v then optional v ":defer t"
             else [ ":defer ${toString v}" ];
           mkDemand = v: optional v ":demand t";
+          mkEnsureNil = v: optional v ":ensure nil";
           extraAfter = optional (config.general != "") "general";
         in
           concatStringsSep "\n  " (
@@ -235,6 +244,7 @@ let
             ++ mkCommand config.command
             ++ mkDefer config.defer
             ++ mkDemand config.demand
+            ++ mkEnsureNil config.ensureNil
             ++ mkDiminish config.diminish
             ++ mkHook config.hook
             ++ mkMode config.mode
