@@ -8,7 +8,7 @@
       enable = true;
       recommendedGcSettings = true;
 
-      prelude = ''
+      prelude = '';;
         ;; Disable some GUI distractions. We set these manually to avoid starting
         ;; the corresponding minor modes.
         (push '(menu-bar-lines . 0) default-frame-alist)
@@ -35,7 +35,7 @@
         files = {
           enable = true;
           ensureNil = true;
-          init = ''
+          init = '';;
             (custom-set-variables
               '(backup-by-copying t)
               '(backup-directory-alist '(("." . "~/.saves/")))
@@ -73,13 +73,13 @@
 
         evil = {
           enable = true;
-          init = ''
+          init = '';;
             (setq evil-search-module 'evil-search)
             (setq evil-ex-complete-emacs-commands nil)
             (setq evil-vsplit-window-right t)
             (setq evil-split-window-below t)
             (setq evil-shift-round nil)
-            (setq evil-want-C-u-scroll t)
+            (setq evil-want-C-u-scroll t) 
             (setq evil-want-Y-yank-to-eol t)
             (setq evil-want-integration nil)
             (setq evil-want-keybinding' nil)
@@ -234,6 +234,29 @@
           after = [ "all-the-icons" ];
           hook = [
             "(dired-mode . all-the-icons-dired-mode)"
+          ];
+        };
+
+        polymode = {
+          enable = true;
+          config = ''
+            (define-hostmode poly-nix-hostmode
+              :mode 'nix-mode)
+
+            (define-innermode poly-nix-elisp-innermode
+              :mode 'emacs-lisp-mode
+              :head-matcher "\'\';;"
+              :tail-matcher "\'\';"
+              :head-mode 'host
+              :tail-mode 'host)
+            
+            (define-polymode poly-nix-mode
+              :hostmode 'poly-nix-hostmode
+              :innermodes '(poly-nix-elisp-innermode))
+                  
+          '';
+          hook = [
+            "(nix-mode . poly-nix-mode)"
           ];
         };
 
@@ -621,6 +644,7 @@
           '';
           hook = [
             "(lisp-mode . smartparens-strict-mode)"
+            "(emacs-lisp-mode . smartparens-strict-mode)"
           ];
         };
 
@@ -628,6 +652,7 @@
           enable = true;
           hook = [
             "(lisp-mode . evil-cleverparens-mode)"
+            "(emacs-lisp-mode . evil-cleverparens-mode)"
           ];
         };
 
