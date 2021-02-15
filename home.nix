@@ -103,6 +103,8 @@ in
     ammonite
     elmPackages.elm-language-server
     gotop
+    source-sans-pro
+    sqlite
   ];
 
   # Home Manager needs a bit of information about you and the
