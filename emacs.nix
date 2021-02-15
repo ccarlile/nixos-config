@@ -9,32 +9,21 @@
       recommendedGcSettings = true;
 
       prelude = ''
-      ;; Disable some GUI distractions. We set these manually to avoid starting
-      ;; the corresponding minor modes.
-      (push '(menu-bar-lines . 0) default-frame-alist)
-      (push '(tool-bar-lines . nil) default-frame-alist)
-      (push '(vertical-scroll-bars . nil) default-frame-alist)
-      ;; Set up fonts early.
-      (set-face-attribute 'default
-      nil
-      :font "Hasklig-12")
+        ;; Disable some GUI distractions. We set these manually to avoid starting
+        ;; the corresponding minor modes.
+        (push '(menu-bar-lines . 0) default-frame-alist)
+        (push '(tool-bar-lines . nil) default-frame-alist)
+        (push '(vertical-scroll-bars . nil) default-frame-alist)
+        ;; Set up fonts early.
+        (set-face-attribute 'default
+        nil
+        :font "Hasklig-12")
 
-        ;; Cargo-culted from rycee, I don't have a pref for this face 
-        ;; but am keeping it for reference
-        ;;(set-face-attribute 'variable-pitch
-        ;;                    nil
-        ;;                    :family "DejaVu Sans")
+        (set-face-attribute 'variable-pitch
+                            nil
+                            :family "Source Sans Pro")
 
         (setq initial-major-mode 'org-mode)
-        (setq global-auto-revert-mode 1)
-        (setq backup-by-copying t)
-        (setq backup-directory-alist '(("." . "~/.saves/")))
-        (setq delete-old-versions t)
-        (setq kept-new-versions 6)
-        (setq kept-old-versions 2)
-        (setq version-control t)
-        (setq column-number-mode 1)
-        (setq global-visual-line-mode 1)
         (setq-default indent-tabs-mode nil)
         (add-hook 'dired-mode-hook 'auto-revert-mode)
         (setq explicit-shell-file-name 
@@ -43,6 +32,45 @@
       '';
 
       usePackage = {
+        files = {
+          enable = true;
+          ensureNil = true;
+          init = ''
+            (custom-set-variables
+              '(backup-by-copying t)
+              '(backup-directory-alist '(("." . "~/.saves/")))
+              '(delete-old-versions t)
+              '(kept-new-versions 6)
+              '(kept-old-versions 2)
+              '(version-control t))
+          '';
+        };
+
+        simple = {
+          enable = true;
+          ensureNil = true;
+          init = ''
+            (custom-set-variables
+              '(column-number-mode t)
+              '(global-visual-line-mode t))
+          '';
+        };
+
+        autorevert = {
+          enable = true;
+          ensureNil = true;
+          init = ''
+            (custom-set-variables '(global-auto-revert-mode 1)) 
+          '';
+          hook = [
+            "(dired-mode . auto-revert-mode)"
+          ];
+        };
+
+        f = {
+          enable = true;
+        };
+
         evil = {
           enable = true;
           init = ''
@@ -167,11 +195,19 @@
               "t n" '(global-linum-mode :which-key "toggle line numbers")
               "t r" '(treemacs :which-key "treemacs")
 
+              "r" '(:ignore t :which-key "roam prefix")
+              "r c" '(org-roam-capture :which-key "roam capture")
+              "r i" '(org-roam-insert :which-key "insert link")
+              "r f" '(org-roam-find-file :which-key "find note")
+              "r t" '(org-roam-dailies-find-today :which-key "today")
+
               "i" '(:ignore t :which-key "inflection")
               "i k" '(string-inflection-kebab-case :which-key "kebab-case")
               "i j" '(string-inflection-camelcase :which-key "CamelCase")
               "i c" '(string-inflection-lower-camelcase :which-key "camelCase")
 
+              "c" '(:ignore t :which-key "comment/code/capture")
+              "c c" '(org-capture :which-key "org-capture")
               "c l" '(comment-or-uncomment-line :which-key "toggle line comment")
               "c u" '(uncomment-region :which-key "uncomment region")
               "c r" '(comment-region :which-key "comment region")
@@ -301,7 +337,72 @@
                (lisp . t)))
             (setq org-babel-python-command "python3")
             (setq org-confirm-babel-evaluate nil)
+            (defun my-agenda-files ()
+              (seq-filter (lambda (a) (f-ext? a "org")) (f-files "~/Dropbox/org/agenda"))) 
+            (setq org-agenda-files (my-agenda-files))
+            (setq org-outline-path-complete-in-steps nil)
+            (setq org-refile-use-outline-path t)
+            (setq org-refile-targets '((nil :maxlevel . 9)
+                                       (org-agenda-files :maxlevel . 9)))
+            (setq org-capture-templates 
+              '(("t" "Todo" entry (file "~/Dropbox/org/agenda/inbox.org") 
+                "* TODO %?\n%U" :empty-lines 1)
+                ("n" "Note" entry (file "~/Dropbox/org/agenda/inbox.org") 
+                "* %?\n%U" :empty-lines 1)))
+            (setq org-todo-keywords
+              '((sequence "TODO" "NEXT" "DEFERRED" "|" "DONE")))
+            (custom-set-faces
+              '(org-level-1 ((t (:inherit outline-1 :height 1.1))))
+              '(org-level-2 ((t (:inherit outline-2 :height 1.1))))
+              '(org-level-3 ((t (:inherit outline-3 :height 1.1))))
+              '(org-level-4 ((t (:inherit outline-4 :height 1.1))))
+              '(org-level-5 ((t (:inherit outline-5 :height 1.1)))))
           '';
+        };
+
+        org-roam = {
+          enable = true;
+          init = ''
+            (setq org-roam-directory "~/Dropbox/org/roam")
+          '';
+          hook = [
+            "(after-init . org-roam-mode)"
+          ];
+        };
+
+        org-bullets = {
+          enable = true;
+          hook = [
+            "(org-mode . org-bullets-mode)"
+          ];
+        };
+
+        org-download = {
+          enable = true;
+        };
+
+        mixed-pitch = {
+          enable = true;
+          hook = [
+            "(org-mode . mixed-pitch-mode)"
+          ];
+        };
+
+        dashboard = {
+          enable = true;
+          config = ''
+            (dashboard-setup-startup-hook)
+            (setq dashboard-startup-banner 'logo)
+            (setq dashboard-projects-backend 'projectile)
+            (setq dashboard-items '((recents  . 5)
+                        (bookmarks . 5)
+                        (projects . 5)
+                        (agenda . 5)))
+          '';
+        };
+
+        writeroom-mode = {
+          enable = true;
         };
 
         ob-ammonite = {
@@ -385,7 +486,7 @@
         doom-themes = {
           enable = true;
           config = ''
-            (load-theme 'doom-solarized-light t) 
+            (load-theme 'doom-flatwhite t) 
             (doom-themes-org-config)
           '';
         };
