@@ -29,6 +29,10 @@
         (setq explicit-shell-file-name 
           (concat (getenv "HOME") "/.nix-profile/bin/zsh"))
         (setq sgml-quick-keys 'close)
+
+        (defun switch-to-scratch-buffer ()
+          (interactive)
+          (switch-to-buffer "*scratch*"))
       '';
 
       usePackage = {
@@ -85,10 +89,11 @@
             (setq evil-want-keybinding' nil)
             (setq evil-undo-system 'undo-fu)
             '';
-          config = ''
+          config = '';;
             (define-key evil-normal-state-map [backspace] 
               'evil-switch-to-windows-last-buffer)
-            (evil-set-initial-state 'term-mode 'emacs)
+            (evil-set-initial-state 'vterm-mode 'emacs)
+            (evil-set-initial-state 'dashboard-mode 'emacs)
             (evil-mode)
             '';
           };
@@ -118,11 +123,18 @@
         general = {
           enable = true;
           after = [ "evil" "which-key" ];
-          config = ''
+          config = '';;
             (general-evil-setup)
+
+            (general-define-key
+              :states 'emacs
+              "C-'" (general-simulate-key "SPC" :state 'normal)
+              "C-:" 'evil-ex)
+
             (general-nmap
               ";" 'evil-ex
               ":" 'evil-repeat-find-char)
+
             (general-nmap
               "C-j" 'evil-window-down
               "C-k" 'evil-window-up
@@ -141,11 +153,18 @@
             (general-create-definer space-leader-mode-def
               :prefix "SPC m")
 
+            (space-leader-mode-def
+              :keymaps 'org-mode-map
+              :states '(normal visual)
+              "t" '(org-sparse-tree :which-key "sparse tree"))
+
             (space-leader-def
               :states '(normal visual)
               :keymaps 'override
 
               "SPC" '(helm-M-x :which-key "M-x")
+              "m" '(:ignore t :which-key "major mode")
+
               "g" '(:ignore t :which-key "git")
               "g s" '(magit-status :which-key "magit")
               "g r" '(browse-at-remote :which-key "browse on forge")
@@ -208,7 +227,7 @@
 
               "c" '(:ignore t :which-key "comment/code/capture")
               "c c" '(org-capture :which-key "org-capture")
-              "c l" '(comment-or-uncomment-line :which-key "toggle line comment")
+              "c l" '(comment-line :which-key "toggle line comment")
               "c u" '(uncomment-region :which-key "uncomment region")
               "c r" '(comment-region :which-key "comment region")
               "c a" '(helm-lsp-code-actions :which-key "LSP - code actions"))
@@ -239,7 +258,7 @@
 
         polymode = {
           enable = true;
-          config = ''
+          config = '';;
             (define-hostmode poly-nix-hostmode
               :mode 'nix-mode)
 
@@ -308,7 +327,7 @@
 
         helm = {
           enable = true;
-          config = ''
+          config = '';;
             (setq helm-display-header-line nil
                   helm-mode-fuzzy-match t
                   helm-completion-in-region-fuzzy-match t
@@ -349,7 +368,7 @@
 
         org = {
           enable = true;
-          config = ''
+          config = '';;
             (require 'org-tempo)
             (require 'org-mouse)
             (org-babel-do-load-languages
@@ -380,6 +399,7 @@
               '(org-level-3 ((t (:inherit outline-3 :height 1.1))))
               '(org-level-4 ((t (:inherit outline-4 :height 1.1))))
               '(org-level-5 ((t (:inherit outline-5 :height 1.1)))))
+
           '';
         };
 
@@ -413,7 +433,7 @@
 
         dashboard = {
           enable = true;
-          config = ''
+          config = '';;
             (dashboard-setup-startup-hook)
             (setq dashboard-startup-banner 'logo)
             (setq dashboard-projects-backend 'projectile)
@@ -476,9 +496,10 @@
           hook = [
             "(org-mode . evil-org-mode)"
           ];
-          config = ''
+          config = '';;
             (require 'evil-org-agenda)
             (evil-org-agenda-set-keys)
+
           '';
         };
 
@@ -650,6 +671,9 @@
 
         evil-cleverparens = {
           enable = true;
+          init = '';;
+            (setq evil-cleverparens-use-s-and-S nil)
+          '';
           hook = [
             "(lisp-mode . evil-cleverparens-mode)"
             "(emacs-lisp-mode . evil-cleverparens-mode)"
@@ -672,6 +696,13 @@
 
         string-inflection = {
           enable = true;
+        };
+
+        vterm = {
+          enable = true;
+          config = '';;
+            (setq vterm-shell "/home/chris/.nix-profile/bin/zsh")
+          '';
         };
       };
     };

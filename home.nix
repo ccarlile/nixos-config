@@ -74,11 +74,19 @@ in
       theme = "refined";
       plugins = [ "fzf" ];
     };
-    initExtra =
-      "
-      export PATH=\"$HOME/bin:$PATH\"
+    initExtra = ''
+      export PATH="$HOME/bin:$PATH"
       fortune | cowsay
-      ";
+
+      vterm_printf(){
+              printf "\e]%s\e\\" "$1"
+      }
+      vterm_prompt_end() {
+          vterm_printf "51;A$(whoami)@$(hostname):$(pwd)";
+      }
+      setopt PROMPT_SUBST
+      PROMPT=$PROMPT'%{$(vterm_prompt_end)%}'
+      '';
   };
 
   programs.fzf = {
@@ -105,6 +113,7 @@ in
     gotop
     source-sans-pro
     sqlite
+    libvterm
   ];
 
   # Home Manager needs a bit of information about you and the
