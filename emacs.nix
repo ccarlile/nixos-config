@@ -129,6 +129,7 @@
             (general-define-key
               :states 'emacs
               "C-'" (general-simulate-key "SPC" :state 'normal)
+              "M-x" 'helm-M-x
               "C-:" 'evil-ex)
 
             (general-nmap
@@ -224,6 +225,19 @@
               "i k" '(string-inflection-kebab-case :which-key "kebab-case")
               "i j" '(string-inflection-camelcase :which-key "CamelCase")
               "i c" '(string-inflection-lower-camelcase :which-key "camelCase")
+
+              "w" '(:ignore t :which-key "window")
+              "w q" '(evil-quit :which-key "quit")
+              "w s" '(evil-window-split :which-key "split window")
+              "w v" '(evil-window-vsplit :which-key "vsplit window")
+              "w h" '(evil-window-left :which-key "window left")
+              "w H" '(evil-window-move-far-left :which-key "move window left")
+              "w l" '(evil-window-right :which-key "move right")
+              "w L" '(evil-window-move-far-right :which-key "move window right")
+              "w k" '(evil-window-up :which-key "window up")
+              "w K" '(evil-window-move-very-top :which-key "move window up")
+              "w j" '(evil-window-down :which-key "window down")
+              "w J" '(evil-window-move-very-bottom :which-key "move window down")
 
               "c" '(:ignore t :which-key "comment/code/capture")
               "c c" '(org-capture :which-key "org-capture")
@@ -399,7 +413,6 @@
               '(org-level-3 ((t (:inherit outline-3 :height 1.1))))
               '(org-level-4 ((t (:inherit outline-4 :height 1.1))))
               '(org-level-5 ((t (:inherit outline-5 :height 1.1)))))
-
           '';
         };
 
@@ -437,6 +450,9 @@
             (dashboard-setup-startup-hook)
             (setq dashboard-startup-banner 'logo)
             (setq dashboard-projects-backend 'projectile)
+            (setq dashboard-set-file-icons t)
+            (setq dashboard-set-heading-icons t)
+            (setq dashboard-set-footer nil)
             (setq dashboard-items '((recents  . 5)
                         (bookmarks . 5)
                         (projects . 5)
