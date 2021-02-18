@@ -413,7 +413,23 @@
               '(org-level-3 ((t (:inherit outline-3 :height 1.1))))
               '(org-level-4 ((t (:inherit outline-4 :height 1.1))))
               '(org-level-5 ((t (:inherit outline-5 :height 1.1)))))
+
+            (custom-theme-set-faces
+              'user
+              '(org-block ((t (:inherit fixed-pitch))))
+              '(org-code ((t (:inherit (shadow fixed-pitch)))))
+              '(org-document-info-keyword ((t (:inherit (shadow fixed-pitch)))))
+              '(org-indent ((t (:inherit (org-hide fixed-pitch)))))
+              '(org-meta-line ((t (:inherit (font-lock-comment-face fixed-pitch)))))
+              '(org-property-value ((t (:inherit fixed-pitch))) t)
+              '(org-special-keyword ((t (:inherit (font-lock-comment-face fixed-pitch)))))
+              '(org-tag ((t (:inherit (shadow fixed-pitch) :weight bold :height 0.8))))
+              '(org-verbatim ((t (:inherit (shadow fixed-pitch))))))
+
           '';
+          hook = [
+            "(org-mode . variable-pitch-mode)"
+          ];
         };
 
         org-roam = {
@@ -435,13 +451,6 @@
 
         org-download = {
           enable = true;
-        };
-
-        mixed-pitch = {
-          enable = true;
-          hook = [
-            "(org-mode . mixed-pitch-mode)"
-          ];
         };
 
         dashboard = {
