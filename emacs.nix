@@ -492,8 +492,12 @@
           '';
         };
 
-        writeroom-mode = {
+        olivetti = {
           enable = true;
+          init = '';;
+            (custom-set-variables
+              '(olivetti-body-width .666))
+          '';
         };
 
         ob-ammonite = {
