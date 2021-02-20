@@ -114,6 +114,7 @@ in
     source-sans-pro
     sqlite
     libvterm
+    tree
   ];
 
   # Home Manager needs a bit of information about you and the

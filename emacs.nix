@@ -21,7 +21,7 @@
 
         (set-face-attribute 'variable-pitch
                             nil
-                            :family "Source Sans Pro")
+                            :font "Source Sans Pro 12")
 
         (setq initial-major-mode 'org-mode)
         (setq-default indent-tabs-mode nil)
@@ -33,6 +33,14 @@
         (defun switch-to-scratch-buffer ()
           (interactive)
           (switch-to-buffer "*scratch*"))
+
+        (defun switch-to-vterm-buffer ()
+          (interactive)
+          (cond ((equal (buffer-name) "vterm") (evil-switch-to-windows-last-buffer))
+                ((member "vterm"
+                         (mapcar #'buffer-name (buffer-list))) (switch-to-buffer "vterm"))
+                (t (vterm))))
+
       '';
 
       usePackage = {
@@ -127,6 +135,10 @@
             (general-evil-setup)
 
             (general-define-key
+             :keymaps 'override
+             "<f9>" 'switch-to-vterm-buffer)
+
+            (general-define-key
               :states 'emacs
               "C-'" (general-simulate-key "SPC" :state 'normal)
               "M-x" 'helm-M-x
@@ -176,6 +188,7 @@
               "b b" '(helm-mini :which-key "list buffers")
               "b s" '(switch-to-scratch-buffer :which-key "scratch")
               "b k" '(kill-buffer :which-key "kill buffer")
+              "b l" '(evil-switch-to-windows-last-buffer :which-key "last buffer")
               
               "f" '(:ignore t :which-key "files")
               "f f" '(helm-find-files :which-key "find")
@@ -210,10 +223,11 @@
               "s m" '(helm-multi-swoop-projectile :which-key "multi swoop")
               "s a" '(mine-do-ag-in-project :which-key "search in a project")
 
-              "t" '(:ignore t :which-key "toggles/themes")
+              "t" '(:ignore t :which-key "toggles/themes/terminal")
               "t t" '(helm-themes :which-key "select theme")
               "t n" '(global-linum-mode :which-key "toggle line numbers")
               "t r" '(treemacs :which-key "treemacs")
+              "t v" '(vterm :which-key "vterm")
 
               "r" '(:ignore t :which-key "roam prefix")
               "r c" '(org-roam-capture :which-key "roam capture")
@@ -371,6 +385,7 @@
 
         helm-icons = {
           enable = true;
+          after = [ "doom-themes" ];
           config = ''
             (helm-icons-enable)
           '';
@@ -382,6 +397,12 @@
 
         org = {
           enable = true;
+          init = '';;
+            (custom-set-variables
+              '(org-adapt-indentation nil)
+              '(org-indent-indentation-per-level 1)
+              '(org-startup-indented t))
+          '';
           config = '';;
             (require 'org-tempo)
             (require 'org-mouse)
@@ -416,7 +437,9 @@
 
             (custom-theme-set-faces
               'user
-              '(org-block ((t (:inherit fixed-pitch))))
+              '(org-block-begin-line
+                ((t (:inherit variable-pitch :height 0.8 :weight light))))
+              '(org-block ((t (:inherit fixed-pitch :height 0.9))))
               '(org-code ((t (:inherit (shadow fixed-pitch)))))
               '(org-document-info-keyword ((t (:inherit (shadow fixed-pitch)))))
               '(org-indent ((t (:inherit (org-hide fixed-pitch)))))
@@ -552,8 +575,21 @@
           enable = true;
         };
 
+        solaire-mode = {
+          enable = true;
+          config = ''
+            (solaire-global-mode +1)
+          '';
+          hook = [
+            "(change-major-mode . turn-on-solaire-mode)"
+            "(after-revert . turn-on-solaire-mode)"
+            "(minibuffer-setup . solaire-mode-in-minibuffer)"
+          ];
+        };
+
         doom-themes = {
           enable = true;
+          after = [ "solaire-mode" ];
           config = ''
             (load-theme 'doom-flatwhite t) 
             (doom-themes-org-config)
