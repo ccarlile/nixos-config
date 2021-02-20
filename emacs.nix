@@ -41,6 +41,14 @@
                          (mapcar #'buffer-name (buffer-list))) (switch-to-buffer "vterm"))
                 (t (vterm))))
 
+        (defun sudo-find-file (file)
+          "Open FILE as root."
+          (interactive
+           (list (read-file-name "Open as root: ")))
+          (find-file (if (file-writable-p file)
+                         file
+                       (concat "/sudo:root@localhost:" file))))
+
       '';
 
       usePackage = {
@@ -182,7 +190,8 @@
               "g s" '(magit-status :which-key "magit")
               "g r" '(browse-at-remote :which-key "browse on forge")
               "g b" '(magit-blame :which-key "blame")
-              "g f" '(magit-log-buffer-file "log for file")
+              "g f" '(magit-log-buffer-file :which-key "log for file")
+              "g u" '(mine-get-browse-at-remote-url :which-key "get url on forge")
             
               "b" '(:ignore t :which-key "buffer")
               "b b" '(helm-mini :which-key "list buffers")
@@ -191,8 +200,10 @@
               "b l" '(evil-switch-to-windows-last-buffer :which-key "last buffer")
               
               "f" '(:ignore t :which-key "files")
-              "f f" '(helm-find-files :which-key "find")
+              "f f" '(helm-find-files :which-key "find file")
               "f j" '(dired-jump :which-key "dired")
+              "f s" '(sudo-find-file :which-key "find file with sudo")
+              "f r" '(ranger :which-key "ranger")
 
               "h" '(:ignore t :which-key "help")
               "h k" '(describe-key :which-key "describe key")
@@ -277,6 +288,10 @@
           '';
         };
 
+        ranger = {
+          enable = true;
+        };
+
         all-the-icons-dired = {
           enable = true;
           after = [ "all-the-icons" ];
@@ -313,9 +328,24 @@
           command = [ "magit-status" "projectile-vc" ];
         };
 
+        browse-at-remote = {
+          enable = true;
+          config = '';;
+          (defun mine-get-browse-at-remote-url ()
+            (interactive)
+            (kill-new (browse-at-remote-get-url)))
+          '';
+        };
+
         ag = {
           enable = true;
           command = [ "ag" "ag-regexp" "ag-project" ];
+          config = ''
+            (defun mine-do-ag-in-project ()
+              "Prompt for a projectile project and search in there"
+              (interactive)
+              (helm-do-ag (completing-read "From which project? " 'projectile-known-projects)))
+          '';
         };
 
         scala-mode = {
@@ -649,6 +679,7 @@
           enable = true;
           config = ''
             (global-flycheck-mode)
+            (setq-default flycheck-disabled-checkers '(emacs-lisp-checkdoc))
           '';
         };
 
