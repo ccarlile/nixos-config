@@ -228,6 +228,7 @@
               "t n" '(global-linum-mode :which-key "toggle line numbers")
               "t r" '(treemacs :which-key "treemacs")
               "t v" '(vterm :which-key "vterm")
+              "t o" '(olivetti-mode :which-key "olivetti (prose mode)")
 
               "r" '(:ignore t :which-key "roam prefix")
               "r c" '(org-roam-capture :which-key "roam capture")
