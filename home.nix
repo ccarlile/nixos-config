@@ -115,6 +115,7 @@ in
     sqlite
     libvterm
     tree
+    kakoune
   ];
 
   # Home Manager needs a bit of information about you and the

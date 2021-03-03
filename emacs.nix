@@ -144,12 +144,12 @@
 
             (general-define-key
              :keymaps 'override
+             "M-x" 'helm-M-x
              "<f9>" 'switch-to-vterm-buffer)
 
             (general-define-key
               :states 'emacs
               "C-'" (general-simulate-key "SPC" :state 'normal)
-              "M-x" 'helm-M-x
               "C-:" 'evil-ex)
 
             (general-nmap
@@ -213,6 +213,8 @@
               "h b" '(describe-bindings :which-key "describe bindings")
               "h m" '(describe-mode :which-key "describe mode")
               "h w" '(which-key-show-top-level :which-key "which key top level")
+              "h s" '(which-key-show-keymap :which-key "which key for keymap")
+              "h j" '(which-key-show-major-mode :which-key "which key for major mode")
 
               "p" '(:ignore t :which-key "project")
               "p f" '(helm-projectile-find-file :which-key "find file")
@@ -286,10 +288,18 @@
             (define-key dired-mode-map (kbd "SPC") nil)
             (setq dired-omit-mode 1)
           '';
+          general = ''
+            (general-nmap
+              "H" 'dired-up-directory)
+          '';
         };
 
         ranger = {
           enable = true;
+          config = '';;
+            (setq ranger-show-literal nil)
+            (setq ranger-preview-file t)
+          '';
         };
 
         all-the-icons-dired = {
@@ -373,6 +383,7 @@
           config = ''
             (evil-collection-init 'term)
             (evil-collection-init 'dired)
+            (evil-collection-init 'magit)
           '';
         };
 
@@ -415,7 +426,7 @@
         };
 
         helm-icons = {
-          enable = true;
+          enable = false;
           after = [ "doom-themes" ];
           config = ''
             (helm-icons-enable)
@@ -556,7 +567,7 @@
 
         evil-avy = {
           enable = true;
-          config = ''
+          config = '';;
             (evil-avy-mode)
             (setq avy-case-fold-search nil)
           '';
@@ -567,11 +578,6 @@
           config = ''
             (evil-multiedit-default-keybinds)
           '';
-        };
-
-        evil-magit = {
-          enable = true;
-          after = [ "evil" "magit" ];
         };
 
         evil-org = {
@@ -690,8 +696,9 @@
             "(elm-mode . lsp)"
             "(lsp-mode . lsp-lens-mode)"
           ];
-          config = ''
+          config = '';;
             (setq lsp-prefer-flymake nil)
+            (setq lsp-enable-snippet t)
           '';
         };
 
@@ -703,10 +710,6 @@
         };
 
         lsp-ui = {
-          enable = true;
-        };
-
-        company-lsp = {
           enable = true;
         };
 
